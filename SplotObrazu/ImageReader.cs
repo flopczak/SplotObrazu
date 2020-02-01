@@ -8,38 +8,33 @@ using System.Drawing;
 
 namespace SplotObrazu
 {
-    enum ImageFormat
-    { p1, p2, p3, p4, p5, X }
-
+   
     class ImageReader
     {
-        private ImageFormat format;
-        private int width, height, depth;
-        public int[,] values;
-
-        public ImageReader(string file)
+        
+        public ImageReader(ImagePGM imagePGM)
         {
-            FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read);
+            FileStream fs = new FileStream(imagePGM.Path, FileMode.Open, FileAccess.Read);
             BinaryReader br = new BinaryReader(fs);
             switch (NextNonCommentLine(br))
             {
                 case "P1":
-                    this.format = ImageFormat.p1;
+                    imagePGM.Format = ImageFormat.p1;
                     break;
                 case "P2":
-                    this.format = ImageFormat.p2;
+                    imagePGM.Format = ImageFormat.p2;
                     break;
                 case "P3":
-                    this.format = ImageFormat.p3;
+                    imagePGM.Format = ImageFormat.p3;
                     break;
                 case "P4":
-                    this.format = ImageFormat.p4;
+                    imagePGM.Format = ImageFormat.p4;
                     break;
                 case "P5":
-                    this.format = ImageFormat.p5;
+                    imagePGM.Format = ImageFormat.p5;
                     break;
                 default:
-                    this.format = ImageFormat.X;
+                    imagePGM.Format = ImageFormat.X;
                     break;
 
             }
@@ -47,41 +42,20 @@ namespace SplotObrazu
             string[] temp2 = temp.Split(' ');
             Console.WriteLine(temp2[0] + " " + temp2[1]);
             
-            this.width = Int32.Parse(temp.Split(' ')[0]);
-            this.height = Int32.Parse(temp.Split(' ')[1]);
-            this.depth = Int32.Parse(NextNonCommentLine(br));
-            values = new int[height,width];
-            for(int i = 0; i < height; i++)
+            imagePGM.Width = Int32.Parse(temp.Split(' ')[0]);
+            imagePGM.Height = Int32.Parse(temp.Split(' ')[1]);
+            imagePGM.Depth = Int32.Parse(NextNonCommentLine(br));
+            imagePGM.Values = new int[imagePGM.Height, imagePGM.Width];
+            for(int i = 0; i < imagePGM.Height; i++)
             {
-                for(int j = 0; j< width; j++)
+                for(int j = 0; j< imagePGM.Width; j++)
                 {
-                    values[i, j] = br.ReadByte();
-                    Console.Write(values[i, j] + " ");
+                    imagePGM.Values[i, j] = br.ReadByte();
+                    Console.Write(imagePGM.Values[i, j] + " ");
                 }
             }
             br.Close();
         }
-
-       
-
-
-        public void saveImage(string path)
-        {
-
-        }
-        public void print()
-        {
-            for (int i = 0; i < this.height; i++)
-            {
-                for (int j = 0; j < this.width; j++)
-                {
-                    Console.Write(this.values[i, j] + " ");
-                }
-                Console.WriteLine();
-            }
-        }
-
-
 
         static string NextAnyLine(BinaryReader br)
         {
@@ -103,11 +77,6 @@ namespace SplotObrazu
                 s = NextAnyLine(br);
             return s;
         }
-
-
-        private int Width { get => width; }
-        private int Height { get => height; }
-        private int Depth { get => depth; }
     }
 
 }

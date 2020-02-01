@@ -9,12 +9,12 @@ namespace SplotObrazu
 {
     class Program
     {
-        static readonly string baboonImage = @"C:\Users\user\Pictures\baboon.pgm";
+        static readonly string baboonImagePath = @"C:\Users\user\Pictures\baboon.pgm";
 
         static void Main(string[] args)
         {
-
-            ImageReader image = new ImageReader(baboonImage);
+            ImagePGM baboonImage = new ImagePGM(baboonImagePath);
+            ImageReader imgReader = new ImageReader(baboonImage);
 
             
         }
