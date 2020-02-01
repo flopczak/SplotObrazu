@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace SplotObrazu
 {
@@ -16,12 +17,11 @@ namespace SplotObrazu
         private int width, height, depth;
         public int[,] values;
 
-
-        public ImageReader(string path)
+        public ImageReader(string file)
         {
-            string[] temp = File.ReadAllLines(path);
-
-            switch (temp[0])
+            FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            switch (NextNonCommentLine(br))
             {
                 case "P1":
                     this.format = ImageFormat.p1;
@@ -43,22 +43,28 @@ namespace SplotObrazu
                     break;
 
             }
-            this.width = Int32.Parse(temp[1].Split(' ')[0]);
-            this.height = Int32.Parse(temp[1].Split(' ')[1]);
-            if (temp[1].Split(' ').Length == 3)
+            string temp = NextNonCommentLine(br);
+            string[] temp2 = temp.Split(' ');
+            Console.WriteLine(temp2[0] + " " + temp2[1]);
+            
+            this.width = Int32.Parse(temp.Split(' ')[0]);
+            this.height = Int32.Parse(temp.Split(' ')[1]);
+            this.depth = Int32.Parse(NextNonCommentLine(br));
+            values = new int[height,width];
+            for(int i = 0; i < height; i++)
             {
-                this.depth = Int32.Parse(temp[1].Split(' ')[2]);
-            }
-            values = new int[this.height, this.width];
-            for (int i = 0; i < this.height; i++)
-            {
-                for (int j = 0; j < this.width; j++)
+                for(int j = 0; j< width; j++)
                 {
-                    this.values[i, j] = Int32.Parse(temp[i + 2].Split(' ')[j]);
+                    values[i, j] = br.ReadByte();
+                    Console.Write(values[i, j] + " ");
                 }
             }
-
+            br.Close();
         }
+
+       
+
+
         public void saveImage(string path)
         {
 
@@ -76,10 +82,33 @@ namespace SplotObrazu
         }
 
 
+
+        static string NextAnyLine(BinaryReader br)
+        {
+            string s = "";
+            byte b = 0;
+            while (b != 10) 
+            {
+                b = br.ReadByte();
+                char c = (char)b;
+                s += c;
+            }
+            return s.Trim();
+        }
+
+        static string NextNonCommentLine(BinaryReader br)
+        {
+            string s = NextAnyLine(br);
+            while (s.StartsWith("#") || s == "")
+                s = NextAnyLine(br);
+            return s;
+        }
+
+
         private int Width { get => width; }
         private int Height { get => height; }
         private int Depth { get => depth; }
     }
 
 }
-}
+
