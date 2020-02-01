@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;
 
-namespace SplotObrazu
+namespace Splot_Obrazu
 {
-   
     class ImageReader
     {
-        
         public ImageReader(ImagePGM imagePGM)
         {
             FileStream fs = new FileStream(imagePGM.Path, FileMode.Open, FileAccess.Read);
@@ -40,28 +38,51 @@ namespace SplotObrazu
             }
             string temp = NextNonCommentLine(br);
             string[] temp2 = temp.Split(' ');
-            Console.WriteLine(temp2[0] + " " + temp2[1]);
-            
+
             imagePGM.Width = Int32.Parse(temp.Split(' ')[0]);
             imagePGM.Height = Int32.Parse(temp.Split(' ')[1]);
             imagePGM.Depth = Int32.Parse(NextNonCommentLine(br));
             imagePGM.Values = new int[imagePGM.Height, imagePGM.Width];
-            for(int i = 0; i < imagePGM.Height; i++)
+            for (int i = 0; i < imagePGM.Height; i++)
             {
-                for(int j = 0; j< imagePGM.Width; j++)
+                for (int j = 0; j < imagePGM.Width; j++)
                 {
                     imagePGM.Values[i, j] = br.ReadByte();
-                    Console.Write(imagePGM.Values[i, j] + " ");
                 }
             }
             br.Close();
+
+        }
+
+        public Bitmap MakeBitmap(ImagePGM pgmImage, int mag)
+        {
+            int width = pgmImage.Width * mag;
+            int height = pgmImage.Height * mag;
+            Bitmap result = new Bitmap(width, height);
+            Graphics gr = Graphics.FromImage(result);
+            for (int i = 0; i < pgmImage.Height; ++i)
+            {
+                for (int j = 0; j < pgmImage.Width; ++j)
+                {
+                    int pixelColor = pgmImage.Values[i, j];
+                    Color c = Color.FromArgb(pixelColor, pixelColor, pixelColor);
+                    SolidBrush sb = new SolidBrush(c);
+                    gr.FillRectangle(sb, j * mag, i * mag, mag, mag);
+                }
+            }
+            return result;
+        }
+        private void Images(object sender, EventArgs e)
+        {
+
+
         }
 
         static string NextAnyLine(BinaryReader br)
         {
             string s = "";
             byte b = 0;
-            while (b != 10) 
+            while (b != 10)
             {
                 b = br.ReadByte();
                 char c = (char)b;
@@ -78,6 +99,5 @@ namespace SplotObrazu
             return s;
         }
     }
-
 }
 

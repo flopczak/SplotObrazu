@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SplotObrazu
+namespace Splot_Obrazu
 {
     enum ImageFormat
     { p1, p2, p3, p4, p5, X }
@@ -37,6 +37,10 @@ namespace SplotObrazu
                 Console.WriteLine();
             }
         }
+
+
+
+
 
         public void saveASCIIPGMImage(string name)
         {
