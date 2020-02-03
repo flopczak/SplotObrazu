@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ namespace Splot_Obrazu
         private ImageFormat format;
         private int width, height, depth;
         private int[,] values;
+
+
         public ImagePGM(string path) { this.path = path; }
         public ImagePGM(ImageFormat format, int width, int height, int depth, int[,] values)
         {
@@ -37,7 +40,24 @@ namespace Splot_Obrazu
                 Console.WriteLine();
             }
         }
-
+        public Bitmap MakeBitmap( int mag)
+        {
+            int width = this.Width * mag;
+            int height = this.Height * mag;
+            Bitmap result = new Bitmap(width, height);
+            Graphics gr = Graphics.FromImage(result);
+            for (int i = 0; i < this.Height; ++i)
+            {
+                for (int j = 0; j < this.Width; ++j)
+                {
+                    int pixelColor = this.Values[i, j];
+                    Color c = Color.FromArgb(pixelColor, pixelColor, pixelColor);
+                    SolidBrush sb = new SolidBrush(c);
+                    gr.FillRectangle(sb, j * mag, i * mag, mag, mag);
+                }
+            }
+            return result;
+        }
 
 
 

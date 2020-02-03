@@ -24,6 +24,10 @@ namespace Splot_Obrazu
             Application.SetCompatibleTextRenderingDefault(false);
             Form1 form = new Form1();
             form.PictureBox1.Image = baboonImage.MakeBitmap(1);
+            Splot s = new Splot();
+            // s.lineFilter(baboonImage, 1);
+            s.sidesFilter(baboonImage);
+            s.cornersFilter(baboonImage);
             Application.Run(form);
         }
     }

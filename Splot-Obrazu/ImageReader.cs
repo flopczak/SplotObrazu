@@ -54,30 +54,6 @@ namespace Splot_Obrazu
 
         }
 
-        public Bitmap MakeBitmap(ImagePGM pgmImage, int mag)
-        {
-            int width = pgmImage.Width * mag;
-            int height = pgmImage.Height * mag;
-            Bitmap result = new Bitmap(width, height);
-            Graphics gr = Graphics.FromImage(result);
-            for (int i = 0; i < pgmImage.Height; ++i)
-            {
-                for (int j = 0; j < pgmImage.Width; ++j)
-                {
-                    int pixelColor = pgmImage.Values[i, j];
-                    Color c = Color.FromArgb(pixelColor, pixelColor, pixelColor);
-                    SolidBrush sb = new SolidBrush(c);
-                    gr.FillRectangle(sb, j * mag, i * mag, mag, mag);
-                }
-            }
-            return result;
-        }
-        private void Images(object sender, EventArgs e)
-        {
-
-
-        }
-
         static string NextAnyLine(BinaryReader br)
         {
             string s = "";
