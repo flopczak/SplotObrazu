@@ -51,6 +51,8 @@ namespace Splot_Obrazu
                 for (int j = 0; j < this.Width; ++j)
                 {
                     int pixelColor = this.Values[i, j];
+                    if (pixelColor > 255) pixelColor = 255;
+                    else if (pixelColor < 0) pixelColor = 0;
                     Color c = Color.FromArgb(pixelColor, pixelColor, pixelColor);
                     SolidBrush sb = new SolidBrush(c);
                     gr.FillRectangle(sb, j * mag, i * mag, mag, mag);
