@@ -135,29 +135,43 @@ namespace Splot_Obrazu
         }
         public void filterImage(ImagePGM image, ImagePGM imageCopy, float[,] filter )
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             centerFilter(image, imageCopy, filter);
             sidesFilter(image, filter);
             cornersFilter(image, filter);
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine("czas normalnie: " + elapsedMs + "ms");
         }
 
         public async Task asyncCenterFilter(ImagePGM image, ImagePGM imageCopy, float[,] filter)
         {
-            for (int i = 1; i < (image.Height - 2)/2; i++)
-            {
-                Task.Run(() => lineFilter(image, imageCopy, i, filter));
-            }
-            for (int i = (image.Height - 2) / 2; i < image.Height - 2; i++)
-            {
-                Task.Run(() => lineFilter(image, imageCopy, i, filter));
-            }
+            Task.Run(() => {
+                for (int i = 1; i < (image.Height - 2) / 2; i++)
+                {
+                    lineFilter(image, imageCopy, i, filter);
+                }
+            });
+            Task.Run(() => {
+                for (int i = (image.Height - 2) / 2; i < image.Height - 2; i++)
+                {
+                    lineFilter(image, imageCopy, i, filter);
+                }
+            });
             
         }
         public async Task asyncFilterImage(ImagePGM image, ImagePGM imageCopy, float[,] filter)
         {
+            var cesp = new ConcurrentExclusiveSchedulerPair();
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            await asyncCenterFilter(image,imageCopy,filter);
-            await Task.Run(() => cornersFilter(image, filter));
-            await Task.Run(() => sidesFilter(image, filter));
+            await asyncCenterFilter(image, imageCopy, filter);
+            var t = Task.Run(() =>
+             {
+                 cornersFilter(image, filter);
+                 sidesFilter(image, filter);
+             });
+            t.Wait();
+
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;

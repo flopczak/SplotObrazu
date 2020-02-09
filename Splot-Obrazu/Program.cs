@@ -35,8 +35,9 @@ namespace Splot_Obrazu
             Form1 form = new Form1();
             form.PictureBox1.Image = baboonImage.MakeBitmap(1);
             Splot s = new Splot();
-            Task t = s.asyncFilterImage(baboonImage, baboonImageCopy, filter1);
-            Task.WaitAll(new Task[] {t});
+            Task t = s.asyncFilterImage(baboonImage, baboonImageCopy, filter4);
+            Task.WaitAll(new Task[] { t });
+            s.filterImage(baboonImage, baboonImageCopy, filter4);
             form.PictureBox2.Image = baboonImage.MakeBitmap(1);
             Application.Run(form);
         }
